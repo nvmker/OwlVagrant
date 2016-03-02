@@ -79,6 +79,9 @@ Vagrant.configure(2) do |config|
     mount_options: ["dmode=775,fmode=664"]
 
   config.vm.provision "shell", inline: <<-SHELL
+
+    sudo hostname ulrike
+
     sudo apt-get update
     sudo apt-get install -y apache2 php5 libapache2-mod-php5
     # if ! [ -L /var/www ]; then
@@ -101,6 +104,8 @@ Vagrant.configure(2) do |config|
 
     sudo groupadd hoxtonowl
 
+    sudo apt-get -y install git
+
     sudo mkdir -p /srv/owl/deployment/
     sudo cp /vagrant/scripts/deploy-api.sh /srv/owl/deployment/
     sudo mkdir -p /var/www/hoxtonowl.com/staging/deployment/
@@ -110,8 +115,6 @@ Vagrant.configure(2) do |config|
     sudo bash /srv/owl/deployment/deploy-api.sh
 
     ## more provisioning...
-    # sudo apt-get -y install git
-    # sudo hostname ulrike
     # cd /opt
     # sudo git clone https://github.com/pingdynasty/OwlProgram.git OwlProgram.online
   SHELL
