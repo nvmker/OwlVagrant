@@ -87,6 +87,8 @@ Vagrant.configure(2) do |config|
     group: "www-data",
     mount_options: ["dmode=775,fmode=664"]
 
+  config.hostsupdater.aliases = ["staging.hoxtonowl.com", "ulrike.pingdynasty.com"]
+
   config.vm.provision "shell", inline: <<-SHELL
 
     # `apt-key update` will update apt's list of secure packages
@@ -95,10 +97,7 @@ Vagrant.configure(2) do |config|
     sudo apt-get update
     sudo apt-get install -y apache2 php5 libapache2-mod-php5
     sudo apt-get -y install libapache2-mod-proxy-html
-    # if ! [ -L /var/www ]; then
-    #   rm -rf /var/www
-    #   ln -fs /vagrant /var/www
-    # fi
+    sudo apt-get -y install mongodb
     sudo mkdir -p /var/www
     sudo rsync -rav /vagrant/html/ /var/www
 
@@ -106,6 +105,8 @@ Vagrant.configure(2) do |config|
     sudo a2ensite staging.hoxtonowl.com
     sudo a2ensite staging.hoxtonowl.com-ssl
     sudo a2enmod proxy_html
+    sudo a2enmod proxy_http
+    sudo a2enmod rewrite
     
     ## installing sql hangs when selecting a password,
     ## need to find another way to do this...
@@ -126,6 +127,12 @@ Vagrant.configure(2) do |config|
     # set up mysql database
     sudo mysql -uroot -psecret < /vagrant/conf/create-databases.sql
     sudo zcat /vagrant/conf/owl_staging_wp.sql.gz|mysql -uowl -powl owl_staging_wp
+
+    # set up mongo database
+    cd /tmp
+    unzip /vagrant/conf/owl_staging.zip
+    mongorestore --drop --collection patches --db owl_staging owl_staging/patches.bson
+    rm -rf owl_staging
 
     sudo groupadd -f hoxtonowl
 
