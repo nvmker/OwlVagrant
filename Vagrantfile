@@ -114,6 +114,19 @@ Vagrant.configure(2) do |config|
     sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password secret'
     sudo apt-get -y install mysql-server-5.5 php5-mysql
 
+    # download and install wordpress
+    sudo apt-get -y install unzip
+    sudo cd /tmp
+    sudo wget -q https://wordpress.org/wordpress-4.4.2.zip
+    sudo unzip -q wordpress-4.4.2.zip
+    sudo mkdir -p /var/www/hoxtonowl.com/staging/httpdocs
+    sudo rsync -rav wordpress/ /var/www/hoxtonowl.com/staging/httpdocs
+    sudo ln -fs /opt/OwlProgram.online/Build/docs/html /var/www/hoxtonowl.com/staging/httpdocs/docs
+
+    # set up mysql database
+    sudo mysql -uroot -psecret < /vagrant/conf/create-databases.sql
+    sudo zcat /vagrant/conf/owl_staging_wp.sql.gz|mysql -uowl -powl owl_staging_wp
+
     sudo groupadd -f hoxtonowl
 
     sudo apt-get -y install git
@@ -139,8 +152,11 @@ Vagrant.configure(2) do |config|
     sudo bash /srv/owl/deployment/deploy-api.sh
 
     ## more provisioning...
-    cd /opt
-    sudo git clone https://github.com/pingdynasty/OwlProgram.git OwlProgram.online
+    sudo mkdir -p /opt/OwlProgram.online
+    cd /opt/OwlProgram.online
+    sudo git init
+    sudo git remote add clone https://github.com/pingdynasty/OwlProgram.git 
+    sudo git pull origin master
     
   SHELL
 
