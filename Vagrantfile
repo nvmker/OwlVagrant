@@ -68,4 +68,21 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get update
   #   sudo apt-get install -y apache2
   # SHELL
+
+  config.vm.network "forwarded_port", guest: 80, host: 4567
+
+  config.vm.synced_folder ".", "/vagrant", id: "vagrant-root",
+    owner: "vagrant",
+    group: "www-data",
+    mount_options: ["dmode=775,fmode=664"]
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update
+    sudo apt-get install -y apache2 php5 libapache2-mod-php5
+    if ! [ -L /var/www ]; then
+      rm -rf /var/www
+      ln -fs /vagrant /var/www
+    fi
+  SHELL
+
 end
