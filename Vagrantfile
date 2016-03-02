@@ -160,9 +160,9 @@ Vagrant.configure(2) do |config|
 
     sudo cp /vagrant/scripts/owl-api /etc/init.d/
     sudo cp /vagrant/scripts/owl-api.service /etc/systemd/system/
-    sudo cp /vagrant/scripts/api-settings.js /srv/owl/api
     sudo bash /var/www/hoxtonowl.com/staging/deployment/deploy-website.sh
     sudo bash /srv/owl/deployment/deploy-api.sh
+    sudo cp /vagrant/scripts/api-settings.js /srv/owl/api
 
     ## more provisioning...
     sudo mkdir -p /opt/OwlProgram.online
