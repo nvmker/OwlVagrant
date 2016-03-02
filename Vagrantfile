@@ -87,7 +87,7 @@ Vagrant.configure(2) do |config|
     group: "www-data",
     mount_options: ["dmode=775,fmode=664"]
 
-  config.hostsupdater.aliases = ["staging.hoxtonowl.com", "ulrike.pingdynasty.com"]
+#  config.hostsupdater.aliases = ["staging.hoxtonowl.com", "ulrike.pingdynasty.com"]
 
   config.vm.provision "shell", inline: <<-SHELL
 
