@@ -8,7 +8,7 @@ REPO_URL="https://github.com/pingdynasty/$CLONE_DIR.git"
 
 # Make sure only root can run this script
 if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root" 1>&2
+    echo "$0 $1 This script must be run as root" 1>&2
     exit 1
 fi
 
@@ -21,6 +21,7 @@ while [ -h "$SOURCE" ]; do
     [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+echo "$0 $1 $DIR is the DIR"
 
 # Work out environment
 HOSTNAME=`hostname`
@@ -35,39 +36,43 @@ then
     GIT_BRANCH='master'
     SITE_URL='http://www.hoxtonowl.com'
 else
-    echo "Unknown hostname $HOSTNAME. Cannot determine target environment."
-    echo "Aborting."
+    echo "$0 $1 Unknown hostname $HOSTNAME. Cannot determine target environment."
+    echo "$0 $1 Aborting."
     exit 1
 fi
-echo "This is $HOSTNAME, assuming $TARGET_ENV environment."
+echo "$0 $1 This is $HOSTNAME, assuming $TARGET_ENV environment."
 
 # Delete previous clone
 rm -rf $DIR/$CLONE_DIR
 
 # Clone repository
-echo "Cloning $CLONE_DIR repository..."
+echo "$0 $1 Cloning $CLONE_DIR repository..."
 git clone --quiet $REPO_URL $DIR/$CLONE_DIR
 cd $DIR/$CLONE_DIR
-echo "Checking out '$GIT_BRANCH' branch..."
+echo "$0 $1 Checking out '$GIT_BRANCH' branch..."
 git checkout $GIT_BRANCH > /dev/null
 git pull origin $GIT_BRANCH > /dev/null
 cd - > /dev/null
 
 # Update Wordpress
-echo "Updating Wordpress files..."
+echo "$0 $1 Updating Wordpress files..."
 rm -rf $DIR/../httpdocs/wp-content/themes/hoxton-owl-2014
+mkdir -p $DIR/../httpdocs/wp-content/themes/
 mv $DIR/$CLONE_DIR/web/wordpress/wp-content/themes/hoxton-owl-2014/ $DIR/../httpdocs/wp-content/themes/
 cp -a $DIR/$CLONE_DIR/web/wordpress/robots.txt $DIR/../httpdocs/
+mkdir -p $DIR/../httpdocs/wp-content/plugins/
 cp $DIR/$CLONE_DIR/web/wordpress/wp-content/plugins/owl-api-bridge.php $DIR/../httpdocs/wp-content/plugins/
 cp $DIR/$CLONE_DIR/web/wordpress/wp-content/plugins/owl-patch-uploader.php $DIR/../httpdocs/wp-content/plugins/
 cp $DIR/$CLONE_DIR/web/wordpress/wp-content/plugins/README.owl.md $DIR/../httpdocs/wp-content/plugins/
 
 # Update Mediawiki
-echo "Updating Mediawiki files..."
+echo "$0 $1 Updating Mediawiki files..."
+mkdir -p $DIR/../httpdocs/mediawiki/skins/
 rsync --quiet -avz $DIR/$CLONE_DIR/web/mediawiki/skins/HoxtonOWL2014 $DIR/../httpdocs/mediawiki/skins/
 
 # Update patch builder script
-echo "Updating patch builder script..."
+echo "$0 $1 Updating patch builder script..."
+mkdir -p $DIR/../patch-builder/
 cp -a $DIR/$CLONE_DIR/web/scripts/patch-builder/patch-builder.php $DIR/../patch-builder/
 cp -a $DIR/$CLONE_DIR/web/scripts/patch-builder/build-all.php $DIR/../patch-builder/
 cp -a $DIR/$CLONE_DIR/web/scripts/patch-builder/common.php $DIR/../patch-builder/
@@ -78,18 +83,20 @@ composer install
 cd - > /dev/null
 
 # Update deployment script
-echo "Updating deployment script..."
-cp -a $DIR/$CLONE_DIR/web/scripts/deployment/deploy-website.sh $DIR/
-cp -a $DIR/$CLONE_DIR/web/README.md $DIR/..
+#echo "$0 $1 Updating deployment script..."
+#cp -a $DIR/$CLONE_DIR/web/scripts/deployment/deploy-website.sh $DIR/
+#cp -a $DIR/$CLONE_DIR/web/README.md $DIR/..
 
 # Set privileges
-echo "Setting up permissions..."
+echo "$0 $1 Setting up permissions..."
 chown -R root $DIR/../httpdocs
 chgrp -R hoxtonowl $DIR/../httpdocs
 find $DIR/../httpdocs -type f -exec chmod 664 '{}' \;
 find $DIR/../httpdocs -type d -exec chmod 775 '{}' \;
 find $DIR/../httpdocs -type d -exec chmod g+s '{}' \;
+mkdir -p $DIR/../httpdocs/wp-content/uploads
 chown -R www-data $DIR/../httpdocs/wp-content/uploads
+mkdir -p $DIR/../httpdocs/mediawiki/images
 chown -R www-data $DIR/../httpdocs/mediawiki/images
 chown -R www-data:www-data $DIR/../patch-builder
 chmod -R a+r $DIR/../patch-builder
@@ -103,9 +110,10 @@ chown -R root:root $DIR/../deployment
 chmod 755 $DIR/../deployment
 chmod 744 $DIR/../deployment/deploy-website.sh
 
+mkdir -p $DIR/../logs
 chown -R www-data:www-data $DIR/../logs
-chmod 664 $DIR/../logs/*
+chmod -f 664 $DIR/../logs/*
 
 # Delete temp repo clone
-echo "Deleting temp repo clone..."
+echo "$0 $1 Deleting temp repo clone..."
 rm -rf $DIR/$CLONE_DIR

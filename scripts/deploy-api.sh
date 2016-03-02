@@ -33,47 +33,48 @@ then
     TARGET_ENV='production'
     GIT_BRANCH='master'
 else
-    echo "Unknown hostname $HOSTNAME. Cannot determine target environment."
-    echo "Aborting."
+    echo "$0 $1 Unknown hostname $HOSTNAME. Cannot determine target environment."
+    echo "$0 $1 Aborting."
     exit 1
 fi
-echo "This is $HOSTNAME, assuming $TARGET_ENV environment."
+echo "$0 $1 This is $HOSTNAME, assuming $TARGET_ENV environment."
 
 # Delete previous clone
 rm -rf $DIR/$CLONE_DIR
 
 # Clone repository
-echo "Cloning $CLONE_DIR repository..."
+echo "$0 $1 Cloning $CLONE_DIR repository..."
 git clone --quiet $REPO_URL $DIR/$CLONE_DIR
 cd $DIR/$CLONE_DIR
-echo "Checking out '$GIT_BRANCH' branch..."
+echo "$0 $1 Checking out '$GIT_BRANCH' branch..."
 git checkout $GIT_BRANCH > /dev/null
 git pull origin $GIT_BRANCH > /dev/null
 cd - > /dev/null
 
 # Copy files
-echo "Copying files..."
-mv $DIR/../api/api-settings.js /tmp
-mv $DIR/../api/node_modules /tmp
+#echo "$0 $1 Copying files..."
+#mkdir -p $DIR/../api
+#mv $DIR/../api/api-settings.js /tmp
+#mv $DIR/../api/node_modules /tmp
 rm -rf $DIR/../api
 cp -a $DIR/OwlServer/web/api $DIR/../
-mv /tmp/api-settings.js $DIR/../api/
-mv /tmp/node_modules $DIR/../api/
+#mv /tmp/api-settings.js $DIR/../api/
+#mv /tmp/node_modules $DIR/../api/
 
-## Install node modules
-#if [ ! -d "$DIR/../api/node_modules" ]; then
-#    echo "Installing node.js modules..."
-#    cd $DIR/../api
-#    npm install
-#    cd - > /dev/null
-#fi
+# Install node modules
+if [ ! -d "$DIR/../api/node_modules" ]; then
+    echo "Installing node.js modules..."
+    cd $DIR/../api
+    npm install
+    cd - > /dev/null
+fi
 
 # Update deployment script
-echo "Updating deployment script..."
-cp $DIR/$CLONE_DIR/web/scripts/deployment/deploy-api.sh $DIR/
+#echo "$0 $1 Updating deployment script..."
+#cp $DIR/$CLONE_DIR/web/scripts/deployment/deploy-api.sh $DIR/
 
 # Set privileges
-echo "Setting up permissions..."
+echo "$0 $1 Setting up permissions..."
 chown -R root $DIR/../api
 chgrp -R hoxtonowl $DIR/../api
 find $DIR/../api -type f -exec chmod 664 '{}' \;
@@ -86,12 +87,12 @@ chown root:root $DIR/deploy-api.sh
 chmod 744 $DIR/deploy-api.sh
 
 # Delete temp repo clone
-echo "Deleting temp repo clone..."
+echo "$0 $1 Deleting temp repo clone..."
 rm -rf $DIR/$CLONE_DIR
 
 # Restart service
-echo "Restarting service..."
+echo "$0 $1 Restarting service..."
 service owl-api stop
 service owl-api start
 
-echo "Done."
+echo "$0 $1 Done."

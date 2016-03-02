@@ -71,6 +71,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "debian/jessie64"
 
+  config.vm.hostname = "ulrike"
+
   config.vm.network "forwarded_port", guest: 80, host: 4567
 
   config.vm.synced_folder ".", "/vagrant", id: "vagrant-root",
@@ -79,8 +81,6 @@ Vagrant.configure(2) do |config|
     mount_options: ["dmode=775,fmode=664"]
 
   config.vm.provision "shell", inline: <<-SHELL
-
-    sudo hostname ulrike
 
     sudo apt-get update
     sudo apt-get install -y apache2 php5 libapache2-mod-php5
@@ -105,6 +105,15 @@ Vagrant.configure(2) do |config|
     sudo groupadd hoxtonowl
 
     sudo apt-get -y install git
+
+    # install the Composer php package manager
+    php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php
+    php composer-setup.php
+    php -r "unlink('composer-setup.php');"
+    sudo mv composer.phar /usr/local/bin/composer
+
+    # install nodejs and npm
+    sudo apt-get install -y nodejs npm
 
     sudo mkdir -p /srv/owl/deployment/
     sudo cp /vagrant/scripts/deploy-api.sh /srv/owl/deployment/
