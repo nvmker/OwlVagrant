@@ -117,20 +117,22 @@ Vagrant.configure(2) do |config|
 
     # download and install wordpress
     sudo apt-get -y install unzip
-    sudo cd /tmp
-    sudo wget -q https://wordpress.org/wordpress-4.4.2.zip
-    sudo unzip -q wordpress-4.4.2.zip
+    cd /tmp
+    wget -q https://wordpress.org/wordpress-4.4.2.zip
+    unzip -q wordpress-4.4.2.zip
     sudo mkdir -p /var/www/hoxtonowl.com/staging/httpdocs
     sudo rsync -rav wordpress/ /var/www/hoxtonowl.com/staging/httpdocs
+    rm -rf wordpress
     sudo ln -fs /opt/OwlProgram.online/Build/docs/html /var/www/hoxtonowl.com/staging/httpdocs/docs
+    sudo cp /vagrant/data/wp-config.php /var/www/hoxtonowl.com/staging/httpdocs
 
     # set up mysql database
     sudo mysql -uroot -psecret < /vagrant/conf/create-databases.sql
-    sudo zcat /vagrant/conf/owl_staging_wp.sql.gz|mysql -uowl -powl owl_staging_wp
+    sudo zcat /vagrant/data/owl_staging_wp.sql.gz|mysql -uowl -powl owl_staging_wp
 
     # set up mongo database
     cd /tmp
-    unzip /vagrant/conf/owl_staging.zip
+    unzip /vagrant/data/owl_staging.zip
     mongorestore --drop --collection patches --db owl_staging owl_staging/patches.bson
     rm -rf owl_staging
 
