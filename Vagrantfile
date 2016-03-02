@@ -91,6 +91,9 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
 
+    # update hosts file (todo: use hostsupdater plugin)
+    sudo cp /vagrant/scripts/hosts /etc/hosts
+
     # `apt-key update` will update apt's list of secure packages
     sudo apt-key update
 
