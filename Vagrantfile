@@ -71,6 +71,10 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "debian/jessie64"
 
+  # restrict box version to ensure we are all using the same box.
+  # always test a `vagrant destroy; vagrant up` after changing this.
+  config.vm.box_version = "8.3.0"
+
   config.vm.hostname = "ulrike"
 
   config.vm.network "forwarded_port", guest: 80, host: 4567
