@@ -114,18 +114,22 @@ Vagrant.configure(2) do |config|
 
     # install nodejs and npm
     sudo apt-get install -y nodejs npm
+    sudo ln -s /usr/bin/nodejs /usr/bin/node
 
     sudo mkdir -p /srv/owl/deployment/
     sudo cp /vagrant/scripts/deploy-api.sh /srv/owl/deployment/
     sudo mkdir -p /var/www/hoxtonowl.com/staging/deployment/
     sudo cp /vagrant/scripts/deploy-website.sh /var/www/hoxtonowl.com/staging/deployment/
 
+    sudo cp /vagrant/scripts/owl-api /etc/init.d/
+    sudo cp /vagrant/scripts/api-settings.js /srv/owl/api
     sudo bash /var/www/hoxtonowl.com/staging/deployment/deploy-website.sh
     sudo bash /srv/owl/deployment/deploy-api.sh
 
     ## more provisioning...
-    # cd /opt
-    # sudo git clone https://github.com/pingdynasty/OwlProgram.git OwlProgram.online
+    cd /opt
+    sudo git clone https://github.com/pingdynasty/OwlProgram.git OwlProgram.online
+    
   SHELL
 
 end
