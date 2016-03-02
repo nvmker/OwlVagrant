@@ -79,6 +79,9 @@ Vagrant.configure(2) do |config|
 
   config.vm.network "forwarded_port", guest: 80, host: 4567
 
+  # gives our vm an ip address, so we can route to it with a hosts file
+  config.vm.network "private_network", ip: "192.168.50.4"
+
   config.vm.synced_folder ".", "/vagrant", id: "vagrant-root",
     owner: "vagrant",
     group: "www-data",
