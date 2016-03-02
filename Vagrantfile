@@ -85,6 +85,16 @@ Vagrant.configure(2) do |config|
       rm -rf /var/www
       ln -fs /vagrant /var/www
     fi
+    
+    ## installing sql hangs when selecting a password,
+    ## need to find another way to do this...
+    # sudo apt-get install -y mysql-server mysql-client php5-mysql
+    
+    ## more provisioning...
+    # sudo apt-get -y install git
+    # sudo hostname ulrike
+    # cd /opt
+    # sudo git clone https://github.com/pingdynasty/OwlProgram.git OwlProgram.online
   SHELL
 
 end
