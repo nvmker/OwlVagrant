@@ -71,9 +71,16 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "debian/jessie64"
 
+  # restrict box version to ensure we are all using the same box.
+  # always test a `vagrant destroy; vagrant up` after changing this.
+  config.vm.box_version = "8.3.0"
+
   config.vm.hostname = "ulrike"
 
   config.vm.network "forwarded_port", guest: 80, host: 4567
+
+  # gives our vm an ip address, so we can route to it with a hosts file
+  config.vm.network "private_network", ip: "192.168.50.4"
 
   config.vm.synced_folder ".", "/vagrant", id: "vagrant-root",
     owner: "vagrant",
@@ -81,6 +88,9 @@ Vagrant.configure(2) do |config|
     mount_options: ["dmode=775,fmode=664"]
 
   config.vm.provision "shell", inline: <<-SHELL
+
+    # `apt-key update` will update apt's list of secure packages
+    sudo apt-key update
 
     sudo apt-get update
     sudo apt-get install -y apache2 php5 libapache2-mod-php5
