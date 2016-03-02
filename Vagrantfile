@@ -81,15 +81,34 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
     sudo apt-get install -y apache2 php5 libapache2-mod-php5
-    if ! [ -L /var/www ]; then
-      rm -rf /var/www
-      ln -fs /vagrant /var/www
-    fi
+    # if ! [ -L /var/www ]; then
+    #   rm -rf /var/www
+    #   ln -fs /vagrant /var/www
+    # fi
+    sudo mkdir -p /var/www
+    sudo rsync -rav /vagrant/html/ /var/www
+
+    sudo cp /vagrant/apacheconf/* /etc/apache2/sites-available/
+    sudo a2ensite staging.hoxtonowl.com
+    sudo a2ensite staging.hoxtonowl.com-ssl
     
     ## installing sql hangs when selecting a password,
     ## need to find another way to do this...
     # sudo apt-get install -y mysql-server mysql-client php5-mysql
-    
+    sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password secret'
+    sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password secret'
+    sudo apt-get -y install mysql-server-5.5 php5-mysql
+
+    sudo groupadd hoxtonowl
+
+    sudo mkdir -p /srv/owl/deployment/
+    sudo cp /vagrant/scripts/deploy-api.sh /srv/owl/deployment/
+    sudo mkdir -p /var/www/hoxtonowl.com/staging/deployment/
+    sudo cp /vagrant/scripts/deploy-website.sh /var/www/hoxtonowl.com/staging/deployment/
+
+    sudo bash /var/www/hoxtonowl.com/staging/deployment/deploy-website.sh
+    sudo bash /srv/owl/deployment/deploy-api.sh
+
     ## more provisioning...
     # sudo apt-get -y install git
     # sudo hostname ulrike
