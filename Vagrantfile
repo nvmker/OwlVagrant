@@ -84,6 +84,7 @@ Vagrant.configure(2) do |config|
 
     sudo apt-get update
     sudo apt-get install -y apache2 php5 libapache2-mod-php5
+    sudo apt-get -y install libapache2-mod-proxy-html
     # if ! [ -L /var/www ]; then
     #   rm -rf /var/www
     #   ln -fs /vagrant /var/www
@@ -94,6 +95,7 @@ Vagrant.configure(2) do |config|
     sudo cp /vagrant/apacheconf/* /etc/apache2/sites-available/
     sudo a2ensite staging.hoxtonowl.com
     sudo a2ensite staging.hoxtonowl.com-ssl
+    sudo a2enmod proxy_html
     
     ## installing sql hangs when selecting a password,
     ## need to find another way to do this...
@@ -102,7 +104,7 @@ Vagrant.configure(2) do |config|
     sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password secret'
     sudo apt-get -y install mysql-server-5.5 php5-mysql
 
-    sudo groupadd hoxtonowl
+    sudo groupadd -f hoxtonowl
 
     sudo apt-get -y install git
 
@@ -114,7 +116,7 @@ Vagrant.configure(2) do |config|
 
     # install nodejs and npm
     sudo apt-get install -y nodejs npm
-    sudo ln -s /usr/bin/nodejs /usr/bin/node
+    sudo ln -fs /usr/bin/nodejs /usr/bin/node
 
     sudo mkdir -p /srv/owl/deployment/
     sudo cp /vagrant/scripts/deploy-api.sh /srv/owl/deployment/
