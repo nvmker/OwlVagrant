@@ -170,6 +170,8 @@ Vagrant.configure(2) do |config|
     sudo git init
     sudo git remote add origin https://github.com/pingdynasty/OwlProgram.git 
     sudo git pull origin master
+
+    sudo apache2ctl restart
     
   SHELL
 
