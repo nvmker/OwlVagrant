@@ -96,8 +96,9 @@ Vagrant.configure(2) do |config|
 
     # `apt-key update` will update apt's list of secure packages
     sudo apt-key update
-
     sudo apt-get update
+
+    # install apache and mongodb
     sudo apt-get install -y apache2 php5 libapache2-mod-php5
     sudo apt-get -y install libapache2-mod-proxy-html
     sudo apt-get -y install mongodb
@@ -110,6 +111,10 @@ Vagrant.configure(2) do |config|
     sudo a2enmod proxy_html
     sudo a2enmod proxy_http
     sudo a2enmod rewrite
+
+    # set up https / ssl
+    sudo apt-get install openssl
+    sudo a2enmod ssl
     
     ## installing sql hangs when selecting a password,
     ## need to find another way to do this...
