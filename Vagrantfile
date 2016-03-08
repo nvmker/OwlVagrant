@@ -97,11 +97,11 @@ Vagrant.configure(2) do |config|
     # `apt-key update` will update apt's list of secure packages
     sudo apt-key update
     sudo apt-get update
+    sudo groupadd -f hoxtonowl
+    sudo apt-get -y install git unzip
 
     # install apache and mongodb
-    sudo apt-get install -y apache2 php5 libapache2-mod-php5
-    sudo apt-get -y install libapache2-mod-proxy-html
-    sudo apt-get -y install mongodb
+    sudo apt-get install -y apache2 php5 libapache2-mod-php5 libapache2-mod-proxy-html mongodb openssl
     sudo mkdir -p /var/www
     sudo rsync -rav /vagrant/html/ /var/www
 
@@ -111,11 +111,8 @@ Vagrant.configure(2) do |config|
     sudo a2enmod proxy_html
     sudo a2enmod proxy_http
     sudo a2enmod rewrite
-
-    # set up https / ssl
-    sudo apt-get install openssl
     sudo a2enmod ssl
-    
+
     # installing mysql hangs when selecting a password unless we set it first
     sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password secret'
     sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password secret'
@@ -128,14 +125,19 @@ Vagrant.configure(2) do |config|
     git init
     git remote add origin https://github.com/pingdynasty/OwlServer.git 
     git pull origin master
-    sudo ln -s /opt/OwlServer/web/wordpress  /var/www/hoxtonowl.com/staging/httpdocs
+    # link wordpress directory
+    sudo ln -s /opt/OwlServer/web/wordpress /var/www/hoxtonowl.com/staging/httpdocs
+    # link api directory
+    sudo ln -s  /opt/OwlServer/web/api /srv/owl/
+    if [ ! -d "/srv/owl/api/node_modules" ]; then
+      echo "Installing node.js modules..."
+      cd /srv/owl/api && npm install
+    fi
 
     # download and install wordpress
-    sudo apt-get -y install unzip
     cd /tmp
     wget -q https://wordpress.org/wordpress-4.4.2.zip
     unzip -q wordpress-4.4.2.zip
-
     sudo rsync -rav wordpress/ /var/www/hoxtonowl.com/staging/httpdocs
     rm -rf wordpress
     sudo ln -fs /opt/OwlProgram.online/Build/docs/html /var/www/hoxtonowl.com/staging/httpdocs/docs
@@ -150,10 +152,6 @@ Vagrant.configure(2) do |config|
     unzip /vagrant/data/owl_staging.zip
     mongorestore --drop --collection patches --db owl_staging owl_staging/patches.bson
     rm -rf owl_staging
-
-    sudo groupadd -f hoxtonowl
-
-    sudo apt-get -y install git
 
     # install the Composer php package manager
     php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php
