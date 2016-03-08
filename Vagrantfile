@@ -128,6 +128,7 @@ Vagrant.configure(2) do |config|
     # link wordpress directory
     sudo ln -s /opt/OwlServer/web/wordpress /var/www/hoxtonowl.com/staging/httpdocs
     # link api directory
+    sudo mkdir -p /srv/owl
     sudo ln -s  /opt/OwlServer/web/api /srv/owl/
     if [ ! -d "/srv/owl/api/node_modules" ]; then
       echo "Installing node.js modules..."
@@ -144,8 +145,9 @@ Vagrant.configure(2) do |config|
     sudo cp /vagrant/data/wp-config.php /var/www/hoxtonowl.com/staging/httpdocs
 
     # set up mysql database
-    sudo mysql -uroot -psecret < /vagrant/conf/create-databases.sql
-    sudo zcat /vagrant/data/owl_staging_wp.sql.gz|mysql -uowl -powl owl_staging_wp
+    mysql -uroot -psecret < /vagrant/conf/create-databases.sql
+    zcat /vagrant/data/owl_staging_wp.sql.gz|mysql -uowl -powl owl_staging_wp
+    zcat /vagrant/data/owl_staging_mediawiki.sql.gz|mysql -uowl_mediawiki -psecret owl_staging_mediawiki
 
     # set up mongo database
     cd /tmp
@@ -171,7 +173,7 @@ Vagrant.configure(2) do |config|
     sudo cp /vagrant/scripts/owl-api /etc/init.d/
     sudo cp /vagrant/scripts/owl-api.service /etc/systemd/system/
     # sudo bash /var/www/hoxtonowl.com/staging/deployment/deploy-website.sh
-    sudo bash /srv/owl/deployment/deploy-api.sh
+    # sudo bash /srv/owl/deployment/deploy-api.sh
     sudo cp /vagrant/scripts/api-settings.js /srv/owl/api
 
     # copy compiled patches
