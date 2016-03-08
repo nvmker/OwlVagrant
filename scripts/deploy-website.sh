@@ -115,5 +115,5 @@ chown -R www-data:www-data $DIR/../logs
 chmod -f 664 $DIR/../logs/*
 
 # Delete temp repo clone
-echo "$0 $1 Deleting temp repo clone..."
-rm -rf $DIR/$CLONE_DIR
+# echo "$0 $1 Deleting temp repo clone..."
+# rm -rf $DIR/$CLONE_DIR

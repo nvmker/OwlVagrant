@@ -116,19 +116,26 @@ Vagrant.configure(2) do |config|
     sudo apt-get install openssl
     sudo a2enmod ssl
     
-    ## installing sql hangs when selecting a password,
-    ## need to find another way to do this...
-    # sudo apt-get install -y mysql-server mysql-client php5-mysql
+    # installing mysql hangs when selecting a password unless we set it first
     sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password secret'
     sudo debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password secret'
     sudo apt-get -y install mysql-server-5.5 php5-mysql
+
+    # install OwlServer as a live repo with symlink
+    sudo mkdir -p /opt/OwlServer
+    sudo chown vagrant:vagrant /opt/OwlServer
+    cd /opt/OwlServer
+    git init
+    git remote add origin https://github.com/pingdynasty/OwlServer.git 
+    git pull origin master
+    sudo ln -s /opt/OwlServer/web/wordpress  /var/www/hoxtonowl.com/staging/httpdocs
 
     # download and install wordpress
     sudo apt-get -y install unzip
     cd /tmp
     wget -q https://wordpress.org/wordpress-4.4.2.zip
     unzip -q wordpress-4.4.2.zip
-    sudo mkdir -p /var/www/hoxtonowl.com/staging/httpdocs
+
     sudo rsync -rav wordpress/ /var/www/hoxtonowl.com/staging/httpdocs
     rm -rf wordpress
     sudo ln -fs /opt/OwlProgram.online/Build/docs/html /var/www/hoxtonowl.com/staging/httpdocs/docs
@@ -158,23 +165,23 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y nodejs npm
     sudo ln -fs /usr/bin/nodejs /usr/bin/node
 
+    # copy and run deploy scripts
     sudo mkdir -p /srv/owl/deployment/
     sudo cp /vagrant/scripts/deploy-api.sh /srv/owl/deployment/
     sudo mkdir -p /var/www/hoxtonowl.com/staging/deployment/
     sudo cp /vagrant/scripts/deploy-website.sh /var/www/hoxtonowl.com/staging/deployment/
-
     sudo cp /vagrant/scripts/owl-api /etc/init.d/
     sudo cp /vagrant/scripts/owl-api.service /etc/systemd/system/
-    sudo bash /var/www/hoxtonowl.com/staging/deployment/deploy-website.sh
+    # sudo bash /var/www/hoxtonowl.com/staging/deployment/deploy-website.sh
     sudo bash /srv/owl/deployment/deploy-api.sh
     sudo cp /vagrant/scripts/api-settings.js /srv/owl/api
 
-    ## more provisioning...
-    sudo mkdir -p /opt/OwlProgram.online
-    cd /opt/OwlProgram.online
-    sudo git init
-    sudo git remote add origin https://github.com/pingdynasty/OwlProgram.git 
-    sudo git pull origin master
+    # copy compiled patches
+    sudo mkdir -p /var/www/hoxtonowl.com/staging/patch-builder/build
+    sudo mkdir -p /var/www/hoxtonowl.com/staging/patch-builder/build-js
+    sudo cp /vagrant/data/build/*.syx /var/www/hoxtonowl.com/staging/patch-builder/build
+    sudo cp /vagrant/data/build-js/*.js /var/www/hoxtonowl.com/staging/patch-builder/build-js
+    sudo chown -R www-data:www-data /var/www/hoxtonowl.com/staging/patch-builder/
 
     sudo apache2ctl restart
 

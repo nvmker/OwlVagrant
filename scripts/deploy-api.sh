@@ -87,8 +87,8 @@ chown root:root $DIR/deploy-api.sh
 chmod 744 $DIR/deploy-api.sh
 
 # Delete temp repo clone
-echo "$0 $1 Deleting temp repo clone..."
-rm -rf $DIR/$CLONE_DIR
+# echo "$0 $1 Deleting temp repo clone..."
+# rm -rf $DIR/$CLONE_DIR
 
 # Restart service
 echo "$0 $1 Restarting service..."
