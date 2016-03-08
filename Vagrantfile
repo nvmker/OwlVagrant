@@ -126,6 +126,7 @@ Vagrant.configure(2) do |config|
     git remote add origin https://github.com/pingdynasty/OwlServer.git 
     git pull origin master
     # link wordpress directory
+    sudo mkdir -p /var/www/hoxtonowl.com/staging/
     sudo ln -s /opt/OwlServer/web/wordpress /var/www/hoxtonowl.com/staging/httpdocs
     # link api directory
     sudo mkdir -p /srv/owl
