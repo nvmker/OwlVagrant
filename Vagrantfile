@@ -140,14 +140,14 @@ Vagrant.configure(2) do |config|
     fi
     # symlink wordpress directory
     mkdir -p /var/www/hoxtonowl.com/staging
-    ln -fs /opt/OwlServer/web/wordpress /var/www/hoxtonowl.com/staging/httpdocs
+    ln -fns /opt/OwlServer/web/wordpress /var/www/hoxtonowl.com/staging/httpdocs
     # symlink api directory
     mkdir -p /srv/owl
-    ln -fs  /opt/OwlServer/web/api /srv/owl/
+    ln -fns  /opt/OwlServer/web/api /srv/owl/
     cp -f /vagrant/scripts/api-settings.js /srv/owl/api/
     # install nodejs and npm
     apt-get install -y nodejs npm
-    ln -fs /usr/bin/nodejs /usr/bin/node
+    ln -fns /usr/bin/nodejs /usr/bin/node
     if [ ! -d "/srv/owl/api/node_modules" ]; then
       echo "Installing node.js modules..."
       cd /srv/owl/api && npm install
@@ -160,17 +160,36 @@ Vagrant.configure(2) do |config|
     mkdir -p /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/images
     chown -R www-data /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/images
     # symlink scripts
-    ln -fs /opt/OwlServer/web/scripts/patch-builder /var/www/hoxtonowl.com/staging/patch-builder
-    ln -fs /opt/OwlServer/web/scripts/deployment /var/www/hoxtonowl.com/staging/deployment
-    ln -fs /opt/OwlServer/web/scripts/backup /var/www/hoxtonowl.com/staging/backup
+    ln -fns /opt/OwlServer/web/scripts/patch-builder /var/www/hoxtonowl.com/staging/patch-builder
+    ln -fns /opt/OwlServer/web/scripts/deployment /var/www/hoxtonowl.com/staging/deployment
+    ln -fns /opt/OwlServer/web/scripts/backup /var/www/hoxtonowl.com/staging/backup
 
     echo installling wordpress
     cd
     wget -c https://wordpress.org/wordpress-4.4.2.zip
     unzip -qo wordpress-4.4.2.zip
     rsync -rav wordpress/ /var/www/hoxtonowl.com/staging/httpdocs
-    ln -fs /opt/OwlProgram.online/Build/docs/html /var/www/hoxtonowl.com/staging/httpdocs/docs
+    ln -fns /opt/OwlProgram.online/Build/docs/html /var/www/hoxtonowl.com/staging/httpdocs/docs
     cp /vagrant/data/wp-config.php /var/www/hoxtonowl.com/staging/httpdocs
+
+    echo installing wordpress plugins
+    cd /var/www/hoxtonowl.com/staging/httpdocs/wp-content/plugins/
+    wget https://downloads.wordpress.org/plugin/theme-my-login.6.4.4.zip
+    unzip theme-my-login.6.4.4.zip && rm theme-my-login.6.4.4.zip
+    wget https://downloads.wordpress.org/plugin/bbpress.2.5.8.zip
+    unzip bbpress.2.5.8.zip && rm bbpress.2.5.8.zip
+    wget https://downloads.wordpress.org/plugin/wordfence.6.0.24.zip
+    unzip wordfence.6.0.24.zip && rm wordfence.6.0.24.zip
+    wget https://downloads.wordpress.org/plugin/shadowbox-js.3.0.3.10.2.zip
+    unzip shadowbox-js.3.0.3.10.2.zip && rm shadowbox-js.3.0.3.10.2.zip
+    wget https://downloads.wordpress.org/plugin/jetpack.3.9.4.zip
+    unzip jetpack.3.9.4.zip && rm jetpack.3.9.4.zip
+    wget https://downloads.wordpress.org/plugin/anti-captcha.20141103.zip
+    unzip anti-captcha.20141103.zip && rm anti-captcha.20141103.zip
+    wget https://downloads.wordpress.org/plugin/bad-behavior.2.2.18.zip
+    unzip bad-behavior.2.2.18.zip && rm bad-behavior.2.2.18.zip
+    wget https://downloads.wordpress.org/plugin/cookie-law-info.1.5.3.zip
+    unzip cookie-law-info.1.5.3.zip && rm cookie-law-info.1.5.3.zip
 
     echo setting up databases
     # set up mysql databases
@@ -211,36 +230,12 @@ Vagrant.configure(2) do |config|
     chown -R www-data:www-data /opt/OwlServer/web/wordpress/mediawiki/cache
     # symlink mediawiki skin
     mkdir -p /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/skins
-    ln -fs /opt/OwlServer/web/mediawiki/skins/HoxtonOWL2014 /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/skins/HoxtonOWL2014
+    ln -fns /opt/OwlServer/web/mediawiki/skins/HoxtonOWL2014 /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/skins/HoxtonOWL2014
     cd  /opt/OwlServer/web/wordpress/mediawiki/
     php5 ./maintenance/update.php --quick
 
-    # echo configuring online compiler
-    # sudo mkdir -p /opt/OwlProgram.online
-    # sudo chown vagrant:vagrant /opt/OwlProgram.online
-    # cd /opt/OwlProgram.online
-    # git init
-    # git remote add origin https://github.com/pingdynasty/OwlProgram.git 
-    # git pull origin master
-    # # install arm gcc
-    # if [ ! -d "/opt/OwlProgram.online/Tools/gcc-arm-none-eabi-5_2-2015q4" ]; then
-    #   cd /opt/OwlProgram.online/Tools
-    #   wget -c 'https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major/+download/gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2'
-    #   tar xf gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2
-    #   # sudo dpkg --add-architecture i386
-    #   # sudo apt-get update
-    #   sudo apt-get -y install lib32z1 lib32ncurses5
-    # fi
-    # # install emscripten
-    # if [ ! -d "/home/vagrant/emsdk_portable" ]; then
-    #   cd
-    #   sudo apt-get install -y build-essential cmake python2.7 default-jre
-    #   wget -c 'https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz'
-    #   tar xf emsdk-portable.tar.gz
-    #   cd emsdk_portable
-    #   ./emsdk update
-    #   ./emsdk install latest
-    # fi
+    echo configuring online compiler
+    # bash /vagrant/scripts/configure-compilers.sh
 
     echo restarting services
     service owl-api stop
