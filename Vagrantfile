@@ -234,7 +234,7 @@ Vagrant.configure(2) do |config|
     cd  /opt/OwlServer/web/wordpress/mediawiki/
     php5 ./maintenance/update.php --quick
 
-    echo configuring online compiler
+    # echo configuring online compiler
     # bash /vagrant/scripts/configure-compilers.sh
 
     echo restarting services
