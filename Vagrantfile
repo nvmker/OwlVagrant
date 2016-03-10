@@ -87,7 +87,10 @@ Vagrant.configure(2) do |config|
     group: "www-data",
     mount_options: ["dmode=775,fmode=664"]
 
-  config.vm.synced_folder "../OwlServer", "/opt/OwlServer"
+  config.vm.synced_folder "../OwlServer", "/opt/OwlServer",
+    owner: "vagrant",
+    group: "www-data",
+    mount_options: ["dmode=775,fmode=664"]
 
 #  config.hostsupdater.aliases = ["staging.hoxtonowl.com", "ulrike.pingdynasty.com"]
 
