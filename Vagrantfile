@@ -106,6 +106,9 @@ Vagrant.configure(2) do |config|
     chmod o+w /var/log/owl-api.log
     touch /var/log/owl-api.err
     chmod o+w /var/log/owl-api.err
+    systemctl daemon-reload
+    update-rc.d mongodb enable
+    update-rc.d owl-api enable
 
     # `apt-key update` will update apt's list of secure packages
     export DEBIAN_FRONTEND=noninteractive
