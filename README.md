@@ -5,7 +5,7 @@ Usage:
 * Install [VirtualBox](https://www.virtualbox.org/).
 * Install [Vagrant](https://www.vagrantup.com/).
 * Install the `vagrant-vbguest` plugin (on Debian based systems, you will need
-  to install the package `ruby-dev` for this to work):
+  to install the package `ruby-dev` for this to work, e.g. `apt-get install ruby-dev`):
 ```
 vagrant plugin install vagrant-vbguest
 ```
