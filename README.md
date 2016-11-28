@@ -33,5 +33,11 @@ cd ../OwlServer/web/owlspa
 npm install
 npm run builddev
 ```
+* SSH into the guest machine and start the OWL API:
+```
+you@yourbox$ vagrant ssh
+vagrant@ulrike:~$ sudo /etc/init.d/owl-api start
+Starting owl-api...
+```
 * Browse to https://staging.hoxtonowl.com/patch-library (allow the insecure certificate)
   and make sure the patch library page loads correctly.
