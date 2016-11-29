@@ -103,8 +103,10 @@ Vagrant.configure(2) do |config|
     cp -f /vagrant/scripts/owl-api /etc/init.d/
     cp -f /vagrant/scripts/owl-api.service /etc/systemd/system/
     touch /var/log/owl-api.log
+    chown www-data:www-data /var/log/owl-api.log
     chmod o+w /var/log/owl-api.log
     touch /var/log/owl-api.err
+    chown www-data:www-data /var/log/owl-api.err
     chmod o+w /var/log/owl-api.err
     systemctl daemon-reload
     update-rc.d mongodb enable
