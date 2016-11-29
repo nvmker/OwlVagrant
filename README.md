@@ -2,12 +2,42 @@
 
 Usage:
 
-* Install [VirtualBox](https://www.virtualbox.org/)
-* Install [Vagrant](https://www.vagrantup.com/)
-* Install the 'vagrant-vbguest' plugin: `vagrant plugin install vagrant-vbguest`
-* Clone this repo e.g. git clone git clone https://github.com/pingdynasty/OwlServer.git OwlVagrant/
-* Clone [OwlServer](https://github.com/pingdynasty/OwlServer) into an adjacent directory called 'OwlServer' e.g. `git clone https://github.com/pingdynasty/OwlServer.git OwlServer/`
-* Add the required files to the 'OwlVagrant/data' directory (see data/README.md for details)
-* Run `vagrant up`
-* Edit your hosts file to point staging.hoxtonowl.com at 192.168.50.4, e.g. on OSX: `sudo nano /etc/hosts` and add a new line with `192.168.50.4 staging.hoxtonowl.com`
-* Browse to https://staging.hoxtonowl.com (allow the insecure certificate)
+* Install [VirtualBox](https://www.virtualbox.org/).
+* Install [Vagrant](https://www.vagrantup.com/).
+* Install the `vagrant-vbguest` plugin (on Debian based systems, you will need
+  to install the package `ruby-dev` for this to work, e.g. `apt-get install ruby-dev`):
+```
+vagrant plugin install vagrant-vbguest
+```
+* Clone this repository:
+```
+git clone https://github.com/pingdynasty/OwlServer.git OwlVagrant/
+```
+* Clone [OwlServer](https://github.com/pingdynasty/OwlServer) into an adjacent
+  directory called 'OwlServer':
+```
+git clone https://github.com/pingdynasty/OwlServer.git OwlServer/
+```
+* Add the required files to the `OwlVagrant/data` directory (see
+  [`data/README.md`](data/README.md) for details).
+* Start Vagrant:
+```
+vagrant up
+```
+* Edit your hosts file to point `staging.hoxtonowl.com` at `192.168.50.4`, e.g.
+  on OSX: `sudo nano /etc/hosts` and add a new line with
+  `192.168.50.4 staging.hoxtonowl.com`
+* Build the JavaScript project:
+```
+cd ../OwlServer/web/owlspa
+npm install
+npm run builddev
+```
+* SSH into the guest machine and start the OWL API:
+```
+you@yourbox$ vagrant ssh
+vagrant@ulrike:~$ sudo /etc/init.d/owl-api start
+Starting owl-api...
+```
+* Browse to https://staging.hoxtonowl.com/patch-library (allow the insecure certificate)
+  and make sure the patch library page loads correctly.
