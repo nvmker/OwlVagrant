@@ -4,7 +4,8 @@ Usage:
 
 * Install [VirtualBox](https://www.virtualbox.org/)
 * Install [Vagrant](https://www.vagrantup.com/)
-* Install the 'vagrant-vbguest' plugin: `vagrant plugin install vagrant-vbguest`
+* Install the 'vagrant-vbguest' plugin: `vagrant plugin install vagrant-vbguest`.
+  * On Debian systems, you may need to install the `ruby-dev` package first, for this to work: `sudo apt-get install ruby-dev`)
 * Clone this repo e.g. git clone git clone https://github.com/pingdynasty/OwlServer.git OwlVagrant/
 * Clone [OwlServer](https://github.com/pingdynasty/OwlServer) into an adjacent directory called 'OwlServer' e.g. `git clone https://github.com/pingdynasty/OwlServer.git OwlServer/`
 * Add the required files to the 'OwlVagrant/data' directory (see data/README.md for details)
