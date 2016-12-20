@@ -120,7 +120,7 @@ Vagrant.configure(2) do |config|
     apt-get -y install git unzip
 
     # install apache and mongodb
-    apt-get install -y apache2 php5 libapache2-mod-php5 libapache2-mod-proxy-html mongodb openssl
+    apt-get install -y apache2 php5 libapache2-mod-php5 libapache2-mod-proxy-html mongodb openssl php5-mongo
     mkdir -p /var/www
     rsync -rav /vagrant/html/ /var/www
 
@@ -154,7 +154,8 @@ Vagrant.configure(2) do |config|
     ln -fns  /opt/OwlServer/web/api /srv/owl/
     cp -f /vagrant/scripts/api-settings.js /srv/owl/api/
     # install nodejs and npm
-    apt-get install -y nodejs npm
+    curl -sL https://deb.nodesource.com/setup_6.x |  bash -
+    sudo apt-get install -y nodejs
     ln -fns /usr/bin/nodejs /usr/bin/node
     if [ ! -d "/srv/owl/api/node_modules" ]; then
       echo "Installing node.js modules..."
@@ -215,6 +216,10 @@ Vagrant.configure(2) do |config|
     php composer-setup.php
     php -r "unlink('composer-setup.php');"
     mv composer.phar /usr/local/bin/composer
+    if [ ! -d "/var/www/hoxtonowl.com/staging/patch-builder/vendor" ]; then
+      echo "Installing patch-builder dependencies..."
+      cd /var/www/hoxtonowl.com/staging/patch-builder && composer install
+    fi
 
     # copy compiled patches
     mkdir -p /var/www/hoxtonowl.com/staging/patch-builder/build
