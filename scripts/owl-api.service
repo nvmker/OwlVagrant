@@ -1,8 +1,9 @@
 [Service]
 ExecStart=/usr/bin/nodejs /srv/owl/api/bin/www
+WorkingDirectory=/srv/owl/api
 Restart=always
-StandardOutput=syslog
-StandardError=syslog
+StandardOutput=journal
+StandardError=journal
 SyslogIdentifier=owl-api
 User=www-data
 Group=www-data
