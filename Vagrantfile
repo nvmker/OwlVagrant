@@ -153,6 +153,7 @@ Vagrant.configure(2) do |config|
     mkdir -p /srv/owl
     ln -fns  /opt/OwlServer/web/api /srv/owl/
     cp -f /vagrant/scripts/api-settings.js /srv/owl/api/
+    cp -f /vagrant/scripts/example.env /srv/owl/api/.env
     # install nodejs and npm
     curl -sL https://deb.nodesource.com/setup_6.x |  bash -
     sudo apt-get install -y nodejs
