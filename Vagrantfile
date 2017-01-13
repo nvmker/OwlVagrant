@@ -120,7 +120,7 @@ Vagrant.configure(2) do |config|
     apt-get -y install git unzip
 
     # install apache and mongodb
-    apt-get install -y apache2 php5 libapache2-mod-php5 libapache2-mod-proxy-html mongodb openssl php5-mongo
+    apt-get install -y apache2 php5 libapache2-mod-php5 libapache2-mod-proxy-html mongodb openssl php5-mongo php5-curl
     mkdir -p /var/www
     rsync -rav /vagrant/html/ /var/www
 
