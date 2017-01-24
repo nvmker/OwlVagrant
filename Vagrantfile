@@ -78,6 +78,7 @@ Vagrant.configure(2) do |config|
   config.vm.hostname = "ulrike"
 
   config.vm.network "forwarded_port", guest: 80, host: 4567
+  config.vm.network "forwarded_port", guest: 27017, host: 27017
 
   # gives our vm an ip address, so we can route to it with a hosts file
   config.vm.network "private_network", ip: "192.168.50.4"
@@ -174,7 +175,7 @@ Vagrant.configure(2) do |config|
     ln -fns /opt/OwlServer/web/scripts/deployment /var/www/hoxtonowl.com/staging/deployment
     ln -fns /opt/OwlServer/web/scripts/backup /var/www/hoxtonowl.com/staging/backup
 
-    echo installling wordpress
+    echo installing wordpress
     cd
     wget -c https://wordpress.org/wordpress-4.4.2.zip
     unzip -qo wordpress-4.4.2.zip
@@ -207,6 +208,7 @@ Vagrant.configure(2) do |config|
     zcat /vagrant/data/owl_staging_wp.sql.gz|mysql -uowl -powl owl_staging_wp
     zcat /vagrant/data/owl_staging_mediawiki.sql.gz|mysql -uowl_mediawiki -psecret owl_staging_mediawiki
     # set up mongo database
+    sudo sed -i 's/^\(bind_ip.*\)127.0.0.1/\10.0.0.0/' /etc/mongodb.conf
     cd /tmp
     unzip -qo /vagrant/data/owl_staging.zip
     mongorestore --drop --collection patches --db owl_staging owl_staging/patches.bson
@@ -255,6 +257,7 @@ Vagrant.configure(2) do |config|
     service owl-api stop
     service owl-api start
     apache2ctl restart
+    sudo systemctl restart mongodb
 
   SHELL
 
