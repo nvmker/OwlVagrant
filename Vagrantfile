@@ -78,7 +78,6 @@ Vagrant.configure(2) do |config|
   config.vm.hostname = "ulrike"
 
   config.vm.network "forwarded_port", guest: 80, host: 4567
-  config.vm.network "forwarded_port", guest: 27017, host: 27017
 
   # gives our vm an ip address, so we can route to it with a hosts file
   config.vm.network "private_network", ip: "192.168.50.4"
