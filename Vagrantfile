@@ -152,7 +152,6 @@ Vagrant.configure(2) do |config|
     # symlink api directory
     mkdir -p /srv/owl
     ln -fns  /opt/OwlServer/web/api /srv/owl/
-    cp -f /vagrant/scripts/api-settings.js /srv/owl/api/
     cp -f /vagrant/scripts/example.env /srv/owl/api/.env
     # install nodejs and npm
     curl -sL https://deb.nodesource.com/setup_6.x |  bash -
@@ -179,6 +178,7 @@ Vagrant.configure(2) do |config|
     wget -c https://wordpress.org/wordpress-4.4.2.zip
     unzip -qo wordpress-4.4.2.zip
     rsync -rav wordpress/ /var/www/hoxtonowl.com/staging/httpdocs
+    cp -a /var/www/hoxtonowl.com/staging/httpdocs/wp-content/plugins/owl-patch-uploader-secret.example.php /var/www/hoxtonowl.com/staging/httpdocs/wp-content/plugins/owl-patch-uploader-secret.php
     ln -fns /opt/OwlProgram.online/Build/docs/html /var/www/hoxtonowl.com/staging/httpdocs/docs
     cp /vagrant/data/wp-config.php /var/www/hoxtonowl.com/staging/httpdocs
 
