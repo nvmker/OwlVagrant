@@ -109,8 +109,6 @@ Vagrant.configure(2) do |config|
     chown www-data:www-data /var/log/owl-api.err
     chmod o+w /var/log/owl-api.err
     systemctl daemon-reload
-    update-rc.d mongodb enable
-    update-rc.d owl-api enable
 
     # `apt-key update` will update apt's list of secure packages
     export DEBIAN_FRONTEND=noninteractive
@@ -175,7 +173,7 @@ Vagrant.configure(2) do |config|
 
     echo installing wordpress
     cd
-    wget -c https://wordpress.org/wordpress-4.4.2.zip
+    wget -q -c https://wordpress.org/wordpress-4.4.2.zip
     unzip -qo wordpress-4.4.2.zip
     rsync -rav wordpress/ /var/www/hoxtonowl.com/staging/httpdocs
     cp -a /var/www/hoxtonowl.com/staging/httpdocs/wp-content/plugins/owl-patch-uploader-secret.example.php /var/www/hoxtonowl.com/staging/httpdocs/wp-content/plugins/owl-patch-uploader-secret.php
@@ -184,21 +182,21 @@ Vagrant.configure(2) do |config|
 
     echo installing wordpress plugins
     cd /var/www/hoxtonowl.com/staging/httpdocs/wp-content/plugins/
-    wget https://downloads.wordpress.org/plugin/theme-my-login.6.4.4.zip
+    wget -q https://downloads.wordpress.org/plugin/theme-my-login.6.4.4.zip
     unzip theme-my-login.6.4.4.zip && rm theme-my-login.6.4.4.zip
-    wget https://downloads.wordpress.org/plugin/bbpress.2.5.8.zip
+    wget -q https://downloads.wordpress.org/plugin/bbpress.2.5.8.zip
     unzip bbpress.2.5.8.zip && rm bbpress.2.5.8.zip
-    wget https://downloads.wordpress.org/plugin/wordfence.6.0.24.zip
+    wget -q https://downloads.wordpress.org/plugin/wordfence.6.0.24.zip
     unzip wordfence.6.0.24.zip && rm wordfence.6.0.24.zip
-    wget https://downloads.wordpress.org/plugin/shadowbox-js.3.0.3.10.2.zip
+    wget -q https://downloads.wordpress.org/plugin/shadowbox-js.3.0.3.10.2.zip
     unzip shadowbox-js.3.0.3.10.2.zip && rm shadowbox-js.3.0.3.10.2.zip
-    wget https://downloads.wordpress.org/plugin/jetpack.3.9.4.zip
+    wget -q https://downloads.wordpress.org/plugin/jetpack.3.9.4.zip
     unzip jetpack.3.9.4.zip && rm jetpack.3.9.4.zip
-    wget https://downloads.wordpress.org/plugin/anti-captcha.20141103.zip
+    wget -q https://downloads.wordpress.org/plugin/anti-captcha.20141103.zip
     unzip anti-captcha.20141103.zip && rm anti-captcha.20141103.zip
-    wget https://downloads.wordpress.org/plugin/bad-behavior.2.2.18.zip
+    wget -q https://downloads.wordpress.org/plugin/bad-behavior.2.2.18.zip
     unzip bad-behavior.2.2.18.zip && rm bad-behavior.2.2.18.zip
-    wget https://downloads.wordpress.org/plugin/cookie-law-info.1.5.3.zip
+    wget -q https://downloads.wordpress.org/plugin/cookie-law-info.1.5.3.zip
     unzip cookie-law-info.1.5.3.zip && rm cookie-law-info.1.5.3.zip
 
     echo setting up databases
@@ -233,12 +231,12 @@ Vagrant.configure(2) do |config|
     echo installing mediawiki
     apt-get -y install php-apc php5-intl imagemagick
     cd
-    wget -c 'https://releases.wikimedia.org/mediawiki/1.26/mediawiki-1.26.2.tar.gz'
+    wget -q -c 'https://releases.wikimedia.org/mediawiki/1.26/mediawiki-1.26.2.tar.gz'
     tar xf mediawiki-1.26.2.tar.gz
     mkdir -p  /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/
     rsync -ra mediawiki-1.26.2/ /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/
     cp /vagrant/data/LocalSettings.php /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/
-    wget -c 'https://gitlab.com/CiaranG/wpmw/repository/archive.zip?ref=master'
+    wget -q -c 'https://gitlab.com/CiaranG/wpmw/repository/archive.zip?ref=master'
     unzip -qo 'archive.zip?ref=master'
     mkdir -p /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/extensions/
     cp wpmw-master*/AuthWP.php /var/www/hoxtonowl.com/staging/httpdocs/mediawiki/extensions/
@@ -253,10 +251,11 @@ Vagrant.configure(2) do |config|
     # bash /vagrant/scripts/configure-compilers.sh
 
     echo restarting services
-    service owl-api stop
-    service owl-api start
-    apache2ctl restart
+    sudo systemctl restart owl-api
+    sudo systemctl enable owl-api
+    sudo apache2ctl restart
     sudo systemctl restart mongodb
+    sudo systemctl enable mongodb
 
   SHELL
 

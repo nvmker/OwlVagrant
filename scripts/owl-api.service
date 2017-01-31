@@ -1,12 +1,13 @@
 [Service]
 ExecStart=/usr/bin/nodejs /srv/owl/api/bin/www
 WorkingDirectory=/srv/owl/api
-Restart=always
+Restart=no
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=owl-api
 User=www-data
 Group=www-data
+WorkingDirectory=/srv/owl/api
 
 [Install]
 WantedBy=multi-user.target
